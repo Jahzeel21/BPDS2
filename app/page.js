@@ -62,7 +62,7 @@ export default function Home() {
         <p className={styles.eyebrow}>Proyecto para principiantes</p>
         <h1>Mi lista de tareas</h1>
         <p className={styles.subtitle}>
-          Escribe lo que debes hacer hoy y marca cada tarea cuando la completes.
+          Nuestro primero protecto en Github (Push de prueba)
         </p>
 
         <div className={styles.inputRow}>
