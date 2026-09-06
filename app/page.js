@@ -59,11 +59,26 @@ export default function Home() {
   return (
     <main className={styles.page}>
       <section className={styles.card}>
-        <p className={styles.eyebrow}>Proyecto para principiantes</p>
-        <h1>Mi lista de tareas</h1>
-        <p className={styles.subtitle}>
-          Escribe lo que debes hacer hoy y marca cada tarea cuando la completes.
-        </p>
+        <header className={styles.header}>
+          <div className={styles.titleGroup}>
+            <p className={styles.eyebrow}>Organized mind</p>
+            <h1>Lista de tareas</h1>
+            <p className={styles.subtitle}>
+              Escribe lo que debes hacer hoy y marca cada tarea cuando la completes.
+            </p>
+          </div>
+
+          <div className={styles.stats}>
+            <div className={styles.statBox}>
+              <span className={styles.statNumber}>{tasks.length}</span>
+              <span className={styles.statLabel}>Tareas</span>
+            </div>
+            <div className={styles.statBox}>
+              <span className={styles.statNumber}>{completedTasks}</span>
+              <span className={styles.statLabel}>Completadas</span>
+            </div>
+          </div>
+        </header>
 
         <div className={styles.inputRow}>
           <input
@@ -85,40 +100,39 @@ export default function Home() {
           </button>
         </div>
 
-        <div className={styles.summary}>
-          <span>{tasks.length} tareas</span>
-          <span>{completedTasks} completadas</span>
+        <div className={styles.listSection}>
+          <p className={styles.listTitle}>Tus tareas</p>
+
+          <ul className={styles.list}>
+            {tasks.length === 0 ? (
+              <li className={styles.emptyState}>No hay tareas todavía. ¡Agrega una!</li>
+            ) : (
+              tasks.map((item) => (
+                <li key={item.id} className={styles.taskItem}>
+                  <label className={styles.taskLabel}>
+                    <input
+                      type="checkbox"
+                      checked={item.done}
+                      onChange={() => handleToggleTask(item.id)}
+                    />
+                    <span className={item.done ? styles.completedText : ""}>
+                      {item.text}
+                    </span>
+                  </label>
+
+                  <button
+                    type="button"
+                    className={styles.deleteButton}
+                    onClick={() => handleDeleteTask(item.id)}
+                    aria-label={`Eliminar la tarea ${item.text}`}
+                  >
+                    Eliminar
+                  </button>
+                </li>
+              ))
+            )}
+          </ul>
         </div>
-
-        <ul className={styles.list}>
-          {tasks.length === 0 ? (
-            <li className={styles.emptyState}>No hay tareas todavía. ¡Agrega una!</li>
-          ) : (
-            tasks.map((item) => (
-              <li key={item.id} className={styles.taskItem}>
-                <label className={styles.taskLabel}>
-                  <input
-                    type="checkbox"
-                    checked={item.done}
-                    onChange={() => handleToggleTask(item.id)}
-                  />
-                  <span className={item.done ? styles.completedText : ""}>
-                    {item.text}
-                  </span>
-                </label>
-
-                <button
-                  type="button"
-                  className={styles.deleteButton}
-                  onClick={() => handleDeleteTask(item.id)}
-                  aria-label={`Eliminar la tarea ${item.text}`}
-                >
-                  Eliminar
-                </button>
-              </li>
-            ))
-          )}
-        </ul>
       </section>
     </main>
   );
