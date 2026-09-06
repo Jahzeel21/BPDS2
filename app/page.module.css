@@ -139,6 +139,36 @@
   color: #94a3b8;
 }
 
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.filters button {
+  border: 1px solid #dbe3f0;
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.filters button:hover {
+  background: #eef2ff;
+  color: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.activeFilter {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  color: white !important;
+  border-color: transparent !important;
+}
+
 .list {
   list-style: none;
   display: flex;
@@ -214,6 +244,10 @@
 
   .inputRow {
     flex-direction: column;
+  }
+
+  .filters {
+    flex-wrap: wrap;
   }
 
   .taskItem {

@@ -16,6 +16,9 @@ export default function Home() {
     { id: 3, text: "Probar la app en el navegador", done: false },
   ]);
 
+  // filter guarda cuál filtro está activo: "all", "pending" o "completed".
+  const [filter, setFilter] = useState("all");
+
   // Esta función se ejecuta cuando el usuario hace clic en "Agregar".
   const handleAddTask = () => {
     // Si el texto está vacío o solo tiene espacios, no agregamos nada.
@@ -55,6 +58,13 @@ export default function Home() {
 
   // Contamos cuántas tareas están completadas.
   const completedTasks = tasks.filter((item) => item.done).length;
+
+  // Filtramos las tareas según el filtro seleccionado.
+  const filteredTasks = tasks.filter((item) => {
+    if (filter === "pending") return !item.done;
+    if (filter === "completed") return item.done;
+    return true; // "all" muestra todas
+  });
 
   return (
     <main className={styles.page}>
@@ -133,6 +143,60 @@ export default function Home() {
             )}
           </ul>
         </div>
+
+        <div className={styles.filters}>
+          <button
+            type="button"
+            onClick={() => setFilter("all")}
+            className={filter === "all" ? styles.activeFilter : ""}
+          >
+            Todas
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilter("pending")}
+            className={filter === "pending" ? styles.activeFilter : ""}
+          >
+            Pendientes
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilter("completed")}
+            className={filter === "completed" ? styles.activeFilter : ""}
+          >
+            Completadas
+          </button>
+        </div>
+
+        <ul className={styles.list}>
+          {filteredTasks.length === 0 ? (
+            <li className={styles.emptyState}>No hay tareas en este filtro.</li>
+          ) : (
+            filteredTasks.map((item) => (
+              <li key={item.id} className={styles.taskItem}>
+                <label className={styles.taskLabel}>
+                  <input
+                    type="checkbox"
+                    checked={item.done}
+                    onChange={() => handleToggleTask(item.id)}
+                  />
+                  <span className={item.done ? styles.completedText : ""}>
+                    {item.text}
+                  </span>
+                </label>
+
+                <button
+                  type="button"
+                  className={styles.deleteButton}
+                  onClick={() => handleDeleteTask(item.id)}
+                  aria-label={`Eliminar la tarea ${item.text}`}
+                >
+                  Eliminar
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
       </section>
     </main>
   );
