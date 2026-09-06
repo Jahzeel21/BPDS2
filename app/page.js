@@ -109,40 +109,7 @@ export default function Home() {
             Agregar
           </button>
         </div>
-
-        <div className={styles.listSection}>
-          <p className={styles.listTitle}>Tus tareas</p>
-
-          <ul className={styles.list}>
-            {tasks.length === 0 ? (
-              <li className={styles.emptyState}>No hay tareas todavía. ¡Agrega una!</li>
-            ) : (
-              tasks.map((item) => (
-                <li key={item.id} className={styles.taskItem}>
-                  <label className={styles.taskLabel}>
-                    <input
-                      type="checkbox"
-                      checked={item.done}
-                      onChange={() => handleToggleTask(item.id)}
-                    />
-                    <span className={item.done ? styles.completedText : ""}>
-                      {item.text}
-                    </span>
-                  </label>
-
-                  <button
-                    type="button"
-                    className={styles.deleteButton}
-                    onClick={() => handleDeleteTask(item.id)}
-                    aria-label={`Eliminar la tarea ${item.text}`}
-                  >
-                    Eliminar
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
+        
 
         <div className={styles.filters}>
           <button
