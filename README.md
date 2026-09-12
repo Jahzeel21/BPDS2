@@ -1,4 +1,7 @@
 # Mi primer ToDo en Next.js
+Contribuidores: Jose Aguilar Diaz, Jahzeel celin Navarro, Cristian Castro 
+
+Universidad de la Costa.
 
 Este proyecto es una versión muy sencilla y didáctica para que estudiantes principiantes aprendan a crear su primera aplicación con JavaScript y Next.js.
 
@@ -12,7 +15,7 @@ La idea es mostrar de forma clara cómo:
 
 ## Captura de ejemplo
 
-![Vista previa de la app de tareas](./public/todo-screenshot.svg)
+![Vista previa de la app de tareas](./public/todo-screenshot.png)
 
 ### Explicación de la pantalla
 

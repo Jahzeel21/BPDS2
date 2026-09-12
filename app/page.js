@@ -2,8 +2,10 @@
 
 // Importamos useState porque vamos a guardar la información de la lista.
 // Este componente será interactivo, por eso necesitamos estado.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
+
+const STORAGE_KEY = "student-todo-tasks";
 
 export default function Home() {
   // task guarda lo que el usuario escribe en el input.
@@ -15,6 +17,36 @@ export default function Home() {
     { id: 2, text: "Crear una función en JavaScript", done: true },
     { id: 3, text: "Probar la app en el navegador", done: false },
   ]);
+  const [isTasksLoaded, setIsTasksLoaded] = useState(false);
+
+  // editingId guarda el id de la tarea que se está editando (null si ninguna).
+  // editingText guarda el texto temporal mientras se edita.
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState("");
+
+  useEffect(() => {
+    const savedTasks = window.localStorage.getItem(STORAGE_KEY);
+
+    if (savedTasks) {
+      try {
+        const parsedTasks = JSON.parse(savedTasks);
+
+        if (Array.isArray(parsedTasks)) {
+          setTasks(parsedTasks);
+        }
+      } catch {
+        window.localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    setIsTasksLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isTasksLoaded) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+  }, [isTasksLoaded, tasks]);
 
   // filter guarda cuál filtro está activo: "all", "pending" o "completed".
   const [filter, setFilter] = useState("all");
@@ -54,6 +86,36 @@ export default function Home() {
     setTasks((tareasAnteriores) =>
       tareasAnteriores.filter((item) => item.id !== id)
     );
+  };
+
+  // Activa el modo edición para una tarea específica.
+  const handleStartEdit = (item) => {
+    setEditingId(item.id);
+    setEditingText(item.text);
+  };
+
+  // Guarda el cambio y sale del modo edición.
+  const handleSaveEdit = (id) => {
+    if (!editingText.trim()) {
+      // Si el usuario borra todo el texto, cancelamos la edición.
+      setEditingId(null);
+      return;
+    }
+
+    setTasks((tareasAnteriores) =>
+      tareasAnteriores.map((item) =>
+        item.id === id ? { ...item, text: editingText.trim() } : item
+      )
+    );
+
+    setEditingId(null);
+    setEditingText("");
+  };
+
+  // Cancela la edición sin guardar (por ejemplo, con Escape).
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingText("");
   };
 
   // Contamos cuántas tareas están completadas.
@@ -109,7 +171,6 @@ export default function Home() {
             Agregar
           </button>
         </div>
-        
 
         <div className={styles.filters}>
           <button
@@ -147,9 +208,35 @@ export default function Home() {
                     checked={item.done}
                     onChange={() => handleToggleTask(item.id)}
                   />
-                  <span className={item.done ? styles.completedText : ""}>
-                    {item.text}
-                  </span>
+
+                  {editingId === item.id ? (
+                    <input
+                      type="text"
+                      className={styles.editInput}
+                      value={editingText}
+                      autoFocus
+                      onChange={(event) => setEditingText(event.target.value)}
+                      onBlur={() => handleSaveEdit(item.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          handleSaveEdit(item.id);
+                        }
+                        if (event.key === "Escape") {
+                          handleCancelEdit();
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span
+                      className={item.done ? styles.completedText : ""}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        handleStartEdit(item);
+                      }}
+                    >
+                      {item.text}
+                    </span>
+                  )}
                 </label>
 
                 <button
