@@ -230,7 +230,7 @@ export default function Home() {
                     <span
                       className={item.done ? styles.completedText : ""}
                       onClick={(event) => {
-                        event.stopPropagation();
+                        event.preventDefault();
                         handleStartEdit(item);
                       }}
                     >
