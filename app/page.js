@@ -19,6 +19,11 @@ export default function Home() {
   ]);
   const [isTasksLoaded, setIsTasksLoaded] = useState(false);
 
+  // editingId guarda el id de la tarea que se está editando (null si ninguna).
+  // editingText guarda el texto temporal mientras se edita.
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState("");
+
   useEffect(() => {
     const savedTasks = window.localStorage.getItem(STORAGE_KEY);
 
@@ -83,6 +88,36 @@ export default function Home() {
     );
   };
 
+  // Activa el modo edición para una tarea específica.
+  const handleStartEdit = (item) => {
+    setEditingId(item.id);
+    setEditingText(item.text);
+  };
+
+  // Guarda el cambio y sale del modo edición.
+  const handleSaveEdit = (id) => {
+    if (!editingText.trim()) {
+      // Si el usuario borra todo el texto, cancelamos la edición.
+      setEditingId(null);
+      return;
+    }
+
+    setTasks((tareasAnteriores) =>
+      tareasAnteriores.map((item) =>
+        item.id === id ? { ...item, text: editingText.trim() } : item
+      )
+    );
+
+    setEditingId(null);
+    setEditingText("");
+  };
+
+  // Cancela la edición sin guardar (por ejemplo, con Escape).
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingText("");
+  };
+
   // Contamos cuántas tareas están completadas.
   const completedTasks = tasks.filter((item) => item.done).length;
 
@@ -136,7 +171,6 @@ export default function Home() {
             Agregar
           </button>
         </div>
-        
 
         <div className={styles.filters}>
           <button
@@ -174,9 +208,35 @@ export default function Home() {
                     checked={item.done}
                     onChange={() => handleToggleTask(item.id)}
                   />
-                  <span className={item.done ? styles.completedText : ""}>
-                    {item.text}
-                  </span>
+
+                  {editingId === item.id ? (
+                    <input
+                      type="text"
+                      className={styles.editInput}
+                      value={editingText}
+                      autoFocus
+                      onChange={(event) => setEditingText(event.target.value)}
+                      onBlur={() => handleSaveEdit(item.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          handleSaveEdit(item.id);
+                        }
+                        if (event.key === "Escape") {
+                          handleCancelEdit();
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span
+                      className={item.done ? styles.completedText : ""}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleStartEdit(item);
+                      }}
+                    >
+                      {item.text}
+                    </span>
+                  )}
                 </label>
 
                 <button
