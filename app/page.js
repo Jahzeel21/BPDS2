@@ -2,8 +2,10 @@
 
 // Importamos useState porque vamos a guardar la información de la lista.
 // Este componente será interactivo, por eso necesitamos estado.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
+
+const STORAGE_KEY = "student-todo-tasks";
 
 export default function Home() {
   // task guarda lo que el usuario escribe en el input.
@@ -15,6 +17,31 @@ export default function Home() {
     { id: 2, text: "Crear una función en JavaScript", done: true },
     { id: 3, text: "Probar la app en el navegador", done: false },
   ]);
+  const [isTasksLoaded, setIsTasksLoaded] = useState(false);
+
+  useEffect(() => {
+    const savedTasks = window.localStorage.getItem(STORAGE_KEY);
+
+    if (savedTasks) {
+      try {
+        const parsedTasks = JSON.parse(savedTasks);
+
+        if (Array.isArray(parsedTasks)) {
+          setTasks(parsedTasks);
+        }
+      } catch {
+        window.localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    setIsTasksLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isTasksLoaded) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+  }, [isTasksLoaded, tasks]);
 
   // filter guarda cuál filtro está activo: "all", "pending" o "completed".
   const [filter, setFilter] = useState("all");
